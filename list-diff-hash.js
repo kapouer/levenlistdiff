@@ -26,10 +26,6 @@
 
   // <Array|String> lists
   var oldList, newList
-  // <Function> key function
-  var keyFn
-  // <Function> hash function
-  var hashFn
   // <Array> roadmap
   var roadmap
   // <Array> patches for old list/string
@@ -48,39 +44,42 @@
     this.item = item
   }
 
-  function init ($oldList, $newList, $keyFn, $hashFn) {
+  function init ($oldList, $newList, keyFn, hashFn) {
     roadmap = []
     patches = []
 
-    oldList = $oldList || []
-    newList = $newList || []
+    var oldLen = $oldList.length
+    var newLen = $newList.length
 
-    keyFn = $keyFn
-    hashFn = $hashFn
+    oldList = new Array(oldLen)
+    newList = new Array(newLen)
 
-    if (typeof $keyFn === 'string') {
-      keyFn = function (item) {
-        return item[$keyFn]
-      }
+    if (typeof keyFn === 'string') {
+      keyFn = function (val) {
+        return val[this]
+      }.bind(keyFn)
     }
 
-    if (!hashFn) {
-      hashFn = function (item) {
-        return item
-      }
-    }
-
-    initRoadmap()
-  }
-
-  function initRoadmap () {
-    var oldLen = oldList.length
-    var newLen = newList.length
+    var val
     for (var i = 0; i <= oldLen; i++) {
       roadmap[i] = [i]
+      if (i === oldLen) break
+      val = $oldList[i]
+      oldList[i] = {
+        val: val,
+        key: keyFn ? keyFn(val) : undefined,
+        hash: hashFn ? hashFn(val) : val
+      }
     }
     for (i = 0; i <= newLen; i++) {
       roadmap[0][i] = i
+      if (i === newLen) break
+      val = $newList[i]
+      newList[i] = {
+        val: val,
+        key: keyFn ? keyFn(val) : undefined,
+        hash: hashFn ? hashFn(val) : val
+      }
     }
   }
 
@@ -113,14 +112,14 @@
   }
 
   function cost (oldItem, newItem) {
-    if (hashFn(newItem) === hashFn(oldItem)) {
+    if (newItem.hash === oldItem.hash) {
       return 0
     }
-    if (typeof oldItem === 'object' && typeof newItem === 'object') {
-      if (!keyFn || keyFn(oldItem) === undefined || keyFn(newItem) === undefined) {
+    if (typeof oldItem.val === 'object' && typeof newItem.val === 'object') {
+      if (oldItem.key === undefined || newItem.key === undefined) {
         return 1
       }
-      if (keyFn(oldItem) === keyFn(newItem)) {
+      if (oldItem.key === newItem.key) {
         return 0
       }
     }
@@ -144,12 +143,12 @@
         continue
       }
       if (insertion !== void 0 && distance === insertion + 1) {
-        patches.push(Patch(oldPos, INSERTION, newList[newPos - 1]))
+        patches.push(Patch(oldPos, INSERTION, newList[newPos - 1].val))
         newPos--
         continue
       }
       if (substitution !== void 0 && distance === substitution + 1) {
-        patches.push(Patch(oldPos - 1, SUBSTITUTION, newList[newPos - 1]))
+        patches.push(Patch(oldPos - 1, SUBSTITUTION, newList[newPos - 1].val))
       }
       oldPos--
       newPos--
@@ -157,7 +156,7 @@
   }
 
   function destroy () {
-    roadmap = oldList = newList = hashFn = keyFn = void 0
+    roadmap = oldList = newList = void 0
   }
 
   function diff (oldList, newList, keyFn, hashFn) {
