@@ -1,6 +1,6 @@
 {
   "name": "list-diff-hash",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Diff two lists/strings in O(n*m) with hash function",
   "main": "index.js",
   "scripts": {
