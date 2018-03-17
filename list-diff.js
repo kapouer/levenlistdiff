@@ -26,8 +26,8 @@
 
   // <Array|String> lists
   var oldList, newList
-  // <String> key name
-  var keyName
+  // <Function> hash function
+  var hashFn
   // <Array> roadmap
   var roadmap
   // <Array> patches for old list/string
@@ -46,13 +46,20 @@
     this.item = item
   }
 
-  function init ($oldList, $newList, $keyName) {
+  function init ($oldList, $newList, $hashFn) {
     roadmap = []
     patches = []
 
     oldList = $oldList || []
     newList = $newList || []
-    keyName = $keyName
+
+    hashFn = $hashFn
+
+    if (typeof $hashFn === 'string') {
+      hashFn = function (item) {
+        return item[$hashFn]
+      }
+    }
 
     initRoadmap()
   }
@@ -101,10 +108,10 @@
       return 0
     }
     if (typeof oldItem === 'object' && typeof newItem === 'object') {
-      if (!keyName || !(keyName in oldItem) || !(keyName in newItem)) {
+      if (!hashFn || hashFn(oldItem) === undefined || hashFn(newItem) === undefined) {
         return 1
       }
-      if (oldItem[keyName] === newItem[keyName]) {
+      if (hashFn(oldItem) === hashFn(newItem)) {
         return 0
       }
     }
@@ -140,11 +147,11 @@
     }
   }
 
-  function destory () {
-    roadmap = oldList = newList = keyName = void 0
+  function destroy () {
+    roadmap = oldList = newList = hashFn = void 0
   }
 
-  function diff (oldList, newList, keyName) {
+  function diff (oldList, newList, hashFn) {
     if (typeof oldList !== 'string' && !isArray(oldList)) {
       oldList = [oldList]
     }
@@ -153,11 +160,11 @@
     }
 
     // initialize the data
-    init(oldList, newList, keyName)
+    init(oldList, newList, hashFn)
     // start computing
     compute()
-    // destory data
-    destory()
+    // destroy data
+    destroy()
 
     return patches
   }
