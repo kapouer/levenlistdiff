@@ -26,6 +26,8 @@
 
   // <Array|String> lists
   var oldList, newList
+  // <Function> key function
+  var keyFn
   // <Function> hash function
   var hashFn
   // <Array> roadmap
@@ -46,18 +48,25 @@
     this.item = item
   }
 
-  function init ($oldList, $newList, $hashFn) {
+  function init ($oldList, $newList, $keyFn, $hashFn) {
     roadmap = []
     patches = []
 
     oldList = $oldList || []
     newList = $newList || []
 
+    keyFn = $keyFn
     hashFn = $hashFn
 
-    if (typeof $hashFn === 'string') {
+    if (typeof $keyFn === 'string') {
+      keyFn = function (item) {
+        return item[$keyFn]
+      }
+    }
+
+    if (!hashFn) {
       hashFn = function (item) {
-        return item[$hashFn]
+        return item
       }
     }
 
@@ -104,14 +113,14 @@
   }
 
   function cost (oldItem, newItem) {
-    if (newItem === oldItem) {
+    if (hashFn(newItem) === hashFn(oldItem)) {
       return 0
     }
     if (typeof oldItem === 'object' && typeof newItem === 'object') {
-      if (!hashFn || hashFn(oldItem) === undefined || hashFn(newItem) === undefined) {
+      if (!keyFn || keyFn(oldItem) === undefined || keyFn(newItem) === undefined) {
         return 1
       }
-      if (hashFn(oldItem) === hashFn(newItem)) {
+      if (keyFn(oldItem) === keyFn(newItem)) {
         return 0
       }
     }
@@ -148,10 +157,10 @@
   }
 
   function destroy () {
-    roadmap = oldList = newList = hashFn = void 0
+    roadmap = oldList = newList = hashFn = keyFn = void 0
   }
 
-  function diff (oldList, newList, hashFn) {
+  function diff (oldList, newList, keyFn, hashFn) {
     if (typeof oldList !== 'string' && !isArray(oldList)) {
       oldList = [oldList]
     }
@@ -160,7 +169,7 @@
     }
 
     // initialize the data
-    init(oldList, newList, hashFn)
+    init(oldList, newList, keyFn, hashFn)
     // start computing
     compute()
     // destroy data
