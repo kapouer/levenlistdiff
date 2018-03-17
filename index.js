@@ -1,1 +1,1 @@
-module.exports = require('./list-diff.js')
+module.exports = require('./list-diff-hash')
