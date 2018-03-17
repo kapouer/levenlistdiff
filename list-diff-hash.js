@@ -31,7 +31,13 @@
   // <Array> patches for old list/string
   var patches
 
-  var isArray = Array.isArray || function (target) {
+  function isArray (target) {
+    if (target.length !== undefined && typeof target.item == "function") {
+      return true
+    }
+    if (Array.isArray) {
+      return Array.isArray(target)
+    }
     return target && Object.prototype.toString.call(target) === '[object Array]'
   }
 
