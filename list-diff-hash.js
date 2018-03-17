@@ -14,7 +14,7 @@
     return
   }
   if (typeof window !== 'undefined') {
-    window.listDiff = factory()
+    window.ListDiff = factory()
   }
 }(function () {
   'use strict'
