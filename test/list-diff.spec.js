@@ -1,5 +1,5 @@
 /* global it, describe */
-var diff = require('../index.js')
+var diff = require('../')
 var chai = require('chai')
 chai.should()
 
@@ -172,7 +172,6 @@ describe('List diff', function () {
   })
 
   it('Test example', function () {
-    var diff = require('../index')
     var oldList = [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}, {id: 'e'}]
     var newList = [{id: 'c'}, {id: 'a'}, {id: 'b'}, {id: 'e'}, {id: 'f'}]
 
