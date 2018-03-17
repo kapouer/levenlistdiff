@@ -161,6 +161,18 @@ describe('List diff', function () {
     assertListEqual(after, before)
   })
 
+  it('Test with no key and hash: object item', function () {
+    var before = [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}, {id: 'e'}]
+    var after = [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}, {id: 'e'}, {id: 'f'}]
+    var patches = diff(before, after, null, function (item) {
+      return JSON.stringify(item)
+    })
+
+    patches.length.should.be.equal(1)
+    perform(before, patches)
+    assertListEqual(after, before)
+  })
+
   it('Mix keyed items with unkeyed items', function () {
     var before = [{id: 'a'}, {id: 'b'}, {key: 'c'}, {key: 'd'}, {id: 'e'}, {id: 'f'}, {id: 'g'}, {id: 'h'}]
     var after = [{id: 'b', flag: 'yes'}, {key: 'c'}, {id: 'e'}, {id: 'f'}, {id: 'g'}, {key: 'd'}]
@@ -168,6 +180,20 @@ describe('List diff', function () {
 
     perform(before, patches)
     before[0] = {id: 'b', flag: 'yes'} // because perform only operates on origin list
+    assertListEqual(after, before)
+  })
+
+  it('Test with key function', function () {
+    var before = [{id: 'a'}, {id: 'b'}, {key: 'c'}, {key: 'd'}, {id: 'e'}, {id: 'f'}, {id: 'g'}, {id: 'h'}]
+    var after = [{id: 'b', key: 'yes'}, {key: 'c'}, {id: 'e'}, {id: 'f'}, {id: 'g'}, {key: 'd'}]
+    var patches = diff(before, after, null, function (item) {
+      if (!item.id) {
+        return
+      }
+      return item.id + (item.key || '')
+    })
+    perform(before, patches)
+    before[0] = {id: 'b', key: 'yes'} // because perform only operates on origin list
     assertListEqual(after, before)
   })
 
