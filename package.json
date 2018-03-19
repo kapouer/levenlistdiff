@@ -1,6 +1,6 @@
 {
   "name": "list-diff-customkey",
-  "version": "1.2.0",
+  "version": "1.0.0",
   "description": "Diff two lists/strings in O(n*m) with custom key function",
   "main": "index.js",
   "scripts": {
