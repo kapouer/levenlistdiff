@@ -1,1 +1,1 @@
-module.exports = require('./list-diff-customkey')
+module.exports = require('./listdiff')
