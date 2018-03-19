@@ -50,7 +50,7 @@
     this.item = item
   }
 
-  function init ($oldList, $newList, keyFn, hashFn) {
+  function init ($oldList, $newList, keyFn) {
     roadmap = []
     patches = []
 
@@ -73,8 +73,7 @@
       val = $oldList[i]
       oldList[i] = {
         val: val,
-        key: keyFn ? keyFn(val) : undefined,
-        hash: hashFn ? hashFn(val) : val
+        key: keyFn ? keyFn(val) : undefined
       }
     }
     for (i = 0; i <= newLen; i++) {
@@ -83,8 +82,7 @@
       val = $newList[i]
       newList[i] = {
         val: val,
-        key: keyFn ? keyFn(val) : undefined,
-        hash: hashFn ? hashFn(val) : val
+        key: keyFn ? keyFn(val) : undefined
       }
     }
   }
@@ -118,7 +116,7 @@
   }
 
   function cost (oldItem, newItem) {
-    if (newItem.hash === oldItem.hash) {
+    if (newItem.val === oldItem.val) {
       return 0
     }
     if (typeof oldItem.val === 'object' && typeof newItem.val === 'object') {
@@ -165,7 +163,7 @@
     roadmap = oldList = newList = void 0
   }
 
-  function diff (oldList, newList, keyFn, hashFn) {
+  function diff (oldList, newList, keyFn) {
     if (typeof oldList !== 'string' && !isArray(oldList)) {
       oldList = [oldList]
     }
@@ -174,7 +172,7 @@
     }
 
     // initialize the data
-    init(oldList, newList, keyFn, hashFn)
+    init(oldList, newList, keyFn)
     // start computing
     compute()
     // destroy data

@@ -161,10 +161,10 @@ describe('List diff', function () {
     assertListEqual(after, before)
   })
 
-  it('Test with no key and hash: object item', function () {
+  it('Test with key as hash: object item', function () {
     var before = [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}, {id: 'e'}]
     var after = [{id: 'a'}, {id: 'b'}, {id: 'c'}, {id: 'd'}, {id: 'e'}, {id: 'f'}]
-    var patches = diff(before, after, null, function (item) {
+    var patches = diff(before, after, function (item) {
       return JSON.stringify(item)
     })
 
