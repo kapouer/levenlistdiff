@@ -1,5 +1,5 @@
-listdiff
-========
+levenlistdiff
+=============
 
 Fork of [list-diff.js](https://github.com/toplan/list-diff),
 with support for a hash function.
@@ -13,13 +13,13 @@ The algorithm finding the minimal amount of moves(patches) is [Levenshtein dista
 ## Install
 
 ```
-npm install listdiff --save
+npm install levenlistdiff --save
 ```
 
 ## Usage
 
 ```javascript
-var Diff = require("listdiff")
+var Diff = require("levenlistdiff")
 var oldList = [{id: "a"}, {id: "b"}, {id: "c"}, {id: "d"}, {id: "e"}]
 var newList = [{id: "c"}, {id: "a"}, {id: "b"}, {id: "e"}, {id: "f"}]
 
@@ -48,7 +48,7 @@ var patches = Diff(oldList, newList, function(item) {
 })
 ```
 
-If `listdiff.js` is added to a web page, it is exposed as `window.ListDiff`.
+If `levenlistdiff.js` is added to a web page, it is exposed as `window.ListDiff`.
 
 ## License 
 MIT
